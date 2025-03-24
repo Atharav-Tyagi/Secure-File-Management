@@ -75,6 +75,22 @@ int authenticate(char *logged_in_user) {
     return 0;
 }
 
+void secure_delete(const char *filename) {
+    FILE *file = fopen(filename, "wb");
+    if (!file) {
+        printf("File not found: %s\n", filename);
+        return;
+    }
+    char wipe[BUFFER_SIZE];
+    memset(wipe, 0, BUFFER_SIZE);
+    for (int i = 0; i < 3; i++) { // Overwrite 3 times
+        fwrite(wipe, 1, BUFFER_SIZE, file);
+    }
+    fclose(file);
+    remove(filename);
+    printf("File securely deleted: %s\n", filename);
+}
+
 void menu(const char *username) {
     int choice;
     char filename[MAX_FILENAME], output_filename[MAX_FILENAME];
