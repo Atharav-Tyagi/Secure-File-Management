@@ -28,6 +28,34 @@ void log_activity(const char *username, const char *action, const char *filename
     fclose(log_file);
 }
 
+void xor_encrypt_decrypt(const char *input_filename, const char *output_filename, const char *username) {
+    FILE *input_file = fopen(input_filename, "rb");
+    if (!input_file) {
+        printf("File not found: %s\n", input_filename);
+        return;
+    }
+    
+    FILE *output_file = fopen(output_filename, "wb");
+    if (!output_file) {
+        printf("Error creating file: %s\n", output_filename);
+        fclose(input_file);
+        return;
+    }
+    
+    unsigned char buffer[BUFFER_SIZE];
+    size_t bytesRead;
+    while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, input_file)) > 0) {
+        for (size_t i = 0; i < bytesRead; i++) {
+            buffer[i] ^= XOR_KEY; // Simple XOR encryption/decryption
+        }
+        fwrite(buffer, 1, bytesRead, output_file);
+    }
+    
+    fclose(input_file);
+    fclose(output_file);
+    log_activity(username, "Encrypted/Decrypted", output_filename);
+    printf("Operation completed successfully: %s -> %s\n", input_filename, output_filename);
+}
 
 void menu(const char *username) {
     int choice;
