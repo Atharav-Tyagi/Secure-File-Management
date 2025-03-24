@@ -57,6 +57,24 @@ void xor_encrypt_decrypt(const char *input_filename, const char *output_filename
     printf("Operation completed successfully: %s -> %s\n", input_filename, output_filename);
 }
 
+int authenticate(char *logged_in_user) {
+    char username[50], password[50];
+    printf("Enter username: ");
+    scanf("%s", username);
+    printf("Enter password: ");
+    scanf("%s", password);
+    
+    for (int i = 0; i < user_count; i++) {
+        if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0) {
+            printf("Login successful!\n");
+            strcpy(logged_in_user, username);
+            return 1;
+        }
+    }
+    printf("Invalid credentials!\n");
+    return 0;
+}
+
 void menu(const char *username) {
     int choice;
     char filename[MAX_FILENAME], output_filename[MAX_FILENAME];
