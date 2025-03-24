@@ -10,7 +10,16 @@
 #define MAX_USERS 10
 #define MAX_FILENAME 100
 #define BUFFER_SIZE 1024
-#define XOR_KEY 0x5A 
+#define XOR_KEY 0x5A // Simple XOR encryption key
+
+typedef struct {
+    char username[50];
+    char password[50];
+} User;
+
+User users[MAX_USERS] = { {"admin", "admin123"} };
+int user_count = 1;
+
 
 
 void menu(const char *username) {
