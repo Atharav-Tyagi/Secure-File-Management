@@ -46,7 +46,7 @@ void xor_encrypt_decrypt(const char *input_filename, const char *output_filename
     size_t bytesRead;
     while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, input_file)) > 0) {
         for (size_t i = 0; i < bytesRead; i++) {
-            buffer[i] ^= XOR_KEY; // Simple XOR encryption/decryption
+            buffer[i] ^= XOR_KEY; 
         }
         fwrite(buffer, 1, bytesRead, output_file);
     }
@@ -83,7 +83,7 @@ void secure_delete(const char *filename) {
     }
     char wipe[BUFFER_SIZE];
     memset(wipe, 0, BUFFER_SIZE);
-    for (int i = 0; i < 3; i++) { // Overwrite 3 times
+    for (int i = 0; i < 3; i++) { 
         fwrite(wipe, 1, BUFFER_SIZE, file);
     }
     fclose(file);
@@ -106,12 +106,18 @@ void menu(const char *username) {
         switch (choice) {
             case 1:
                 printf("Enter filename to encrypt: ");
+                scanf("%s", filename);
+                xor_encrypt_decrypt(filename, "encrypted.dat", username);
                 break;
             case 2:
                 printf("Enter output filename for decrypted file: ");
+                scanf("%s", output_filename);
+                xor_encrypt_decrypt("encrypted.dat", output_filename, username);
                 break;
             case 3:
                 printf("Enter filename to securely delete: ");
+                scanf("%s", filename);
+                secure_delete(filename);
                 break;
             case 4:
                 exit(0);
