@@ -36,6 +36,46 @@ void log_event(const char *event) {
     fclose(log);
 }
 
+int authenticate() {
+    char username[50], password[50];
+    int otp, entered_otp;
+
+    printf("\n--- Secure File Management System ---\n");
+    printf("Enter Username: ");
+    scanf("%s", username);
+    printf("Enter Password: ");
+    scanf("%s", password);
+
+    int authenticated = 0;
+    for (int i = 0; i < MAX_USERS; i++) {
+        if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0) {
+            authenticated = 1;
+            break;
+        }
+    }
+
+    if (!authenticated) {
+        log_event("Unauthorized login attempt detected.");
+        printf("Invalid username or password! Access denied.\n");
+        return 0;
+    }
+
+    otp = generate_otp();
+    printf("\nYour OTP is: %d\n", otp);
+    printf("Enter OTP: ");
+    scanf("%d", &entered_otp);
+
+    if (entered_otp != otp) {
+        log_event("Failed OTP authentication attempt.");
+        printf("Incorrect OTP! Access denied.\n");
+        return 0;
+    }
+
+    log_event("User successfully authenticated.");
+    printf("Login Successful!\n");
+    return 1;
+}
+
 void log_activity(const char *username, const char *action, const char *filename) {
     FILE *log_file = fopen("activity.log", "a");
     if (!log_file) return;
