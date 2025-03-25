@@ -178,7 +178,12 @@ void menu(const char *username) {
                 secure_delete(filename);
                 break;
             case 4:
-                exit(0);
+                view_logs();
+                break;
+            case 5:
+                printf("Exiting system...\n");
+                log_event("User logged out.");
+                break;
             default:
                 printf("Invalid choice!\n");
         }
