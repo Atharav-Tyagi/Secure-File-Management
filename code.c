@@ -185,10 +185,6 @@ void menu(const char *username) {
     }
 }
 
-int main() {
-    char logged_in_user[50];
-    if (authenticate(logged_in_user)) {
-        menu(logged_in_user);
-    }
+
     return 0;
 }
