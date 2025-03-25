@@ -108,28 +108,30 @@ void xor_encrypt_decrypt(const char *input_file, const char *output_file) {
     printf("Operation completed successfully: %s\n", output_file);
 }
 
-void log_activity(const char *username, const char *action, const char *filename) {
-    FILE *log_file = fopen("activity.log", "a");
-    if (!log_file) return;
-    time_t now = time(NULL);
-    fprintf(log_file, "%s - User: %s, Action: %s, File: %s\n", ctime(&now), username, action, filename);
-    fclose(log_file);
-}
-
 void secure_delete(const char *filename) {
-    FILE *file = fopen(filename, "wb");
+    FILE *file = fopen(filename, "rb+");
     if (!file) {
-        printf("File not found: %s\n", filename);
+        printf("Error: Cannot open file for deletion.\n");
         return;
     }
-    char wipe[BUFFER_SIZE];
-    memset(wipe, 0, BUFFER_SIZE);
-    for (int i = 0; i < 3; i++) { 
-        fwrite(wipe, 1, BUFFER_SIZE, file);
+
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    for (int pass = 0; pass < 5; pass++) {
+        fseek(file, 0, SEEK_SET);
+        for (long i = 0; i < size; i++) {
+            fputc(rand() % 256, file);
+        }
+        fflush(file);
     }
+
     fclose(file);
     remove(filename);
-    printf("File securely deleted: %s\n", filename);
+
+    log_event("File securely deleted.");
+    printf("File securely deleted!\n");
 }
 
 void menu(const char *username) {
