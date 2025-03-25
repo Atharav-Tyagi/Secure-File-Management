@@ -14,8 +14,27 @@ typedef struct {
     char password[50];
 } User;
 
-User users[MAX_USERS] = { {"admin", "admin123"} };
-int user_count = 1;
+User users[MAX_USERS] = {
+    {"admin", "admin123"},
+    {"user1", "password1"},
+};
+
+int generate_otp() {
+    srand(time(NULL));
+    return (rand() % 9000) + 1000;
+}
+
+void log_event(const char *event) {
+    FILE *log = fopen(LOG_FILE, "a");
+    if (log == NULL) {
+        printf("Error: Cannot open log file.\n");
+        return;
+    }
+    time_t now;
+    time(&now);
+    fprintf(log, "[%s] %s\n", ctime(&now), event);
+    fclose(log);
+}
 
 void log_activity(const char *username, const char *action, const char *filename) {
     FILE *log_file = fopen("activity.log", "a");
