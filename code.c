@@ -1,16 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
 
-#define MAX_USERS 10
-#define MAX_FILENAME 100
-#define BUFFER_SIZE 1024
-#define XOR_KEY 0x5A // Simple XOR encryption key
+#define MAX_USERS 5
+#define MAX_FILENAME 256
+#define LOG_FILE "security_log.txt"
+#define ENCRYPTION_KEY "MySecretKey123"
 
 typedef struct {
     char username[50];
