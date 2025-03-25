@@ -134,6 +134,21 @@ void secure_delete(const char *filename) {
     printf("File securely deleted!\n");
 }
 
+void view_logs() {
+    FILE *log = fopen(LOG_FILE, "r");
+    if (!log) {
+        printf("No logs available.\n");
+        return;
+    }
+
+    printf("\n--- Security Logs ---\n");
+    char line[256];
+    while (fgets(line, sizeof(line), log)) {
+        printf("%s", line);
+    }
+    fclose(log);
+}
+
 void menu(const char *username) {
     int choice;
     char filename[MAX_FILENAME], output_filename[MAX_FILENAME];
