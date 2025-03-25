@@ -76,59 +76,44 @@ int authenticate() {
     return 1;
 }
 
+void xor_encrypt_decrypt(const char *input_file, const char *output_file) {
+    FILE *input = fopen(input_file, "rb");
+    if (!input) {
+        printf("Error: Cannot open file.\n");
+        return;
+    }
+
+    FILE *output = fopen(output_file, "wb");
+    if (!output) {
+        fclose(input);
+        printf("Error: Cannot create output file.\n");
+        return;
+    }
+
+    char key[] = ENCRYPTION_KEY;
+    int key_len = strlen(key);
+    char buffer;
+    int i = 0;
+
+    while (fread(&buffer, 1, 1, input) == 1) {
+        buffer ^= key[i % key_len];
+        fwrite(&buffer, 1, 1, output);
+        i++;
+    }
+
+    fclose(input);
+    fclose(output);
+
+    log_event("File encrypted/decrypted successfully.");
+    printf("Operation completed successfully: %s\n", output_file);
+}
+
 void log_activity(const char *username, const char *action, const char *filename) {
     FILE *log_file = fopen("activity.log", "a");
     if (!log_file) return;
     time_t now = time(NULL);
     fprintf(log_file, "%s - User: %s, Action: %s, File: %s\n", ctime(&now), username, action, filename);
     fclose(log_file);
-}
-
-void xor_encrypt_decrypt(const char *input_filename, const char *output_filename, const char *username) {
-    FILE *input_file = fopen(input_filename, "rb");
-    if (!input_file) {
-        printf("File not found: %s\n", input_filename);
-        return;
-    }
-    
-    FILE *output_file = fopen(output_filename, "wb");
-    if (!output_file) {
-        printf("Error creating file: %s\n", output_filename);
-        fclose(input_file);
-        return;
-    }
-    
-    unsigned char buffer[BUFFER_SIZE];
-    size_t bytesRead;
-    while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, input_file)) > 0) {
-        for (size_t i = 0; i < bytesRead; i++) {
-            buffer[i] ^= XOR_KEY; 
-        }
-        fwrite(buffer, 1, bytesRead, output_file);
-    }
-    
-    fclose(input_file);
-    fclose(output_file);
-    log_activity(username, "Encrypted/Decrypted", output_filename);
-    printf("Operation completed successfully: %s -> %s\n", input_filename, output_filename);
-}
-
-int authenticate(char *logged_in_user) {
-    char username[50], password[50];
-    printf("Enter username: ");
-    scanf("%s", username);
-    printf("Enter password: ");
-    scanf("%s", password);
-    
-    for (int i = 0; i < user_count; i++) {
-        if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0) {
-            printf("Login successful!\n");
-            strcpy(logged_in_user, username);
-            return 1;
-        }
-    }
-    printf("Invalid credentials!\n");
-    return 0;
 }
 
 void secure_delete(const char *filename) {
