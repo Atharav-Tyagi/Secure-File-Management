@@ -149,31 +149,39 @@ void view_logs() {
     fclose(log);
 }
 
-void menu(const char *username) {
+int main() {
+    if (!authenticate()) {
+        return 0;
+    }
+
     int choice;
     char filename[MAX_FILENAME], output_filename[MAX_FILENAME];
-    while (1) {
-        printf("\nSecure File Management System\n");
+
+    do {
+        printf("\n--- Secure File Management System ---\n");
         printf("1. Encrypt File\n");
         printf("2. Decrypt File\n");
         printf("3. Securely Delete File\n");
-        printf("4. Exit\n");
+        printf("4. View Security Logs\n");
+        printf("5. Exit\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
-        
+
         switch (choice) {
             case 1:
-                printf("Enter filename to encrypt: ");
+                printf("Enter file name to encrypt: ");
                 scanf("%s", filename);
-                xor_encrypt_decrypt(filename, "encrypted.dat", username);
+                snprintf(output_filename, sizeof(output_filename), "%s.enc", filename);
+                xor_encrypt_decrypt(filename, output_filename);
                 break;
             case 2:
-                printf("Enter output filename for decrypted file: ");
-                scanf("%s", output_filename);
-                xor_encrypt_decrypt("encrypted.dat", output_filename, username);
+                printf("Enter file name to decrypt: ");
+                scanf("%s", filename);
+                snprintf(output_filename, sizeof(output_filename), "%s.dec", filename);
+                xor_encrypt_decrypt(filename, output_filename);
                 break;
             case 3:
-                printf("Enter filename to securely delete: ");
+                printf("Enter file name to securely delete: ");
                 scanf("%s", filename);
                 secure_delete(filename);
                 break;
@@ -185,11 +193,9 @@ void menu(const char *username) {
                 log_event("User logged out.");
                 break;
             default:
-                printf("Invalid choice!\n");
+                printf("Invalid choice! Try again.\n");
         }
-    }
-}
-
+    } while (choice != 5);
 
     return 0;
 }
